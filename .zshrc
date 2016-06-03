@@ -21,6 +21,9 @@ PROMPT="%{${fg[green]}%}[%n@%m]%{${reset_color}%} %~
 %# "
 RPROMPT='[%F{green}%d%f]'
 
+# color alias for remote with tmux
+alias ssh='TERM=xterm ssh'
+
 # split character settingz.
 autoload -Uz select-word-style
 select-word-style default

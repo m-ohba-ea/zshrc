@@ -32,8 +32,10 @@ zstyle ':zle:*' word-style unspecified
 
 ########################################
 # auto-complete
+fpath=(~/.zsh_repo/completion $fpath)
+
 autoload -Uz compinit
-compinit
+compinit -u
 
 # ignore higher/lower character.
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
@@ -140,6 +142,8 @@ alias -g gd='git diff'
 alias -g gc='git checkout'
 alias -g gl='git log'
 
+alias -g ms='mysql -u root -p'
+
 # copy to clipboard with "C"
 if which pbcopy >/dev/null 2>&1 ; then
     # Mac
@@ -188,4 +192,8 @@ function new_terminal_working_directory() {
 zle -N new_terminal_working_directory
 bindkey "^T" new_terminal_working_directory
 
+
+
+# zsh-bd
+. ~/.zsh_repo/plugins/bd/bd.zsh
 

@@ -14,6 +14,7 @@ colors
 HISTFILE=~/.zsh_history
 HISTSIZE=1000000
 SAVEHIST=1000000
+HISTTIMEFORMAT='%Y-%m-%d %T%z '
 
 # PROMPT view settings
 # two lines view
@@ -141,6 +142,7 @@ alias -g ga='git add'
 alias -g gd='git diff'
 alias -g gc='git checkout'
 alias -g gl='git log'
+alias -g gp='git push'
 
 alias -g ms='mysql -u root -p'
 
@@ -197,3 +199,6 @@ bindkey "^T" new_terminal_working_directory
 # zsh-bd
 . ~/.zsh_repo/plugins/bd/bd.zsh
 
+
+# zsh-bd
+. ~/.zsh_repo/plugins/bd/bd.zsh

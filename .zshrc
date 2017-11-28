@@ -15,6 +15,7 @@ HISTFILE=~/.zsh_history
 HISTSIZE=1000000
 SAVEHIST=1000000
 HISTTIMEFORMAT='%Y-%m-%d %T%z '
+setopt extended_history
 
 # PROMPT view settings
 # two lines view
@@ -144,7 +145,11 @@ alias -g gc='git checkout'
 alias -g gl='git log'
 alias -g gp='git push'
 
+dbdl(){ scp root@$1:~/backup/mysql/`ssh $1 "ls -ltr /root/backup/mysql | tail -n 1 | cut -d' ' -f10"` ./ }
+drestore(){ zcat $1 | mysql -u root -p $2 }
+
 alias -g ms='mysql -u root -p'
+alias -g esl='exec $SHELL -l'
 
 # copy to clipboard with "C"
 if which pbcopy >/dev/null 2>&1 ; then
@@ -199,6 +204,3 @@ bindkey "^T" new_terminal_working_directory
 # zsh-bd
 . ~/.zsh_repo/plugins/bd/bd.zsh
 
-
-# zsh-bd
-. ~/.zsh_repo/plugins/bd/bd.zsh

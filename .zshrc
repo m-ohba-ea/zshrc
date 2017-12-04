@@ -145,8 +145,9 @@ alias -g gc='git checkout'
 alias -g gl='git log'
 alias -g gp='git push'
 
-dbdl(){ scp root@$1:~/backup/mysql/`ssh $1 "ls -ltr /root/backup/mysql | tail -n 1 | cut -d' ' -f10"` ./ }
+dbdl(){ scp root@$1:~/backup/mysql/`ssh $1 "ls -ltr /root/backup/mysql | tail -n 1 | cut -d' ' -f11"` ./ }
 drestore(){ zcat $1 | mysql -u root -p $2 }
+dsync_remote(){ scp root@$1:~/backup/mysql/`ssh $1 "ls -ltr /root/backup/mysql | tail -n 1 | cut -d' ' -f11"` ./${1}_`date +%y%m%d`.sql.gz ; zcat ${1}_`date +%y%m%d`.sql.gz | mysql -u root -p $2 }
 
 alias -g ms='mysql -u root -p'
 alias -g esl='exec $SHELL -l'

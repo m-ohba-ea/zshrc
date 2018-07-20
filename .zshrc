@@ -148,7 +148,7 @@ alias -g gb='git branch'
 alias -g lf='find ./ -type d -name "cache" -prune -o'
 
 dbdl(){ scp -rC root@$1:~/backup/mysql/`ssh $1 "ls -ltr /root/backup/mysql | tail -n 1 | rev | cut -d' ' -f1 | rev"` ./$1_`date +%y%m%d`.sql.gz }
-drestore(){ if [[ $1 =~ .sql ]]; then cat $1 | mysql -u root -p $2; else zcat $1 | mysql -u root -p $2; fi }
+drestore(){ if [[ $1 =~ .sql.gz ]]; then zcat $1 | mysql -u root -p $2; else cat $1 | mysql -u root -p $2; fi }
 dsync_remote(){ scp root@$1:~/backup/mysql/`ssh $1 "ls -ltr /root/backup/mysql | tail -n 1 | rev | cut -d' ' -f1 | rev"` ./${1}_`date +%y%m%d`.sql.gz ; zcat ${1}_`date +%y%m%d`.sql.gz | mysql -u root -p $2 }
 duser(){ zcat /var/www/html/User*.sql.gz | mysql -u root -p $1}
 

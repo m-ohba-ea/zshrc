@@ -150,11 +150,11 @@ alias -g lf='find ./ -type d -name "cache" -prune -o'
 myhosts() { _values `cat /etc/hosts` }
 dbdl(){ scp -rC root@$1:~/backup/mysql/`ssh $1 "ls -ltr /root/backup/mysql | tail -n 1 | rev | cut -d' ' -f1 | rev"` ./$1_`date +%y%m%d`.sql.gz }
 drestore(){ if [[ $1 =~ .sql.gz ]]; then zcat $1 | mysql -u root -p $2; else cat $1 | mysql -u root -p $2; fi }
-dsync_remote(){ scp root@$1:~/backup/mysql/`ssh $1 "ls -ltr /root/backup/mysql | tail -n 1 | rev | cut -d' ' -f1 | rev"` ./${1}_`date +%y%m%d`.sql.gz ; zcat ${1}_`date +%y%m%d`.sql.gz | mysql -u root -p $2 }
+dsync_remote(){ scp root@$1:`ssh $1 "ls -ltr /root/backup/mysql/*$3*.sql.gz | tail -n 1 | rev | cut -d' ' -f1 | rev"` ./${1}_`date +%y%m%d`.sql.gz ; zcat ${1}_`date +%y%m%d`.sql.gz | mysql -u root -p $2 }
 duser(){ zcat /var/www/html/User*.sql.gz | mysql -u root -p $1}
 
-compdef myhosts dbdl
-compdef myhosts dsync_remote
+compdef dbdl=ssh
+compdef dsync_remote=ssh
 
 alias -g ms='mysql -u root -p'
 alias -g esl='exec $SHELL -l'
@@ -207,11 +207,6 @@ function new_terminal_working_directory() {
 zle -N new_terminal_working_directory
 bindkey "^T" new_terminal_working_directory
 
-
-
 # zsh-bd
 . ~/.zsh_repo/plugins/bd/bd.zsh
 
-
-# zsh-bd
-. ~/.zsh_repo/plugins/bd/bd.zsh

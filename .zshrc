@@ -152,6 +152,8 @@ dbdl(){ scp -rC root@$1:~/backup/mysql/`ssh $1 "ls -ltr /root/backup/mysql | tai
 drestore(){ if [[ $1 =~ .sql.gz ]]; then zcat $1 | mysql -u root -p $2; else cat $1 | mysql -u root -p $2; fi }
 dsync_remote(){ scp root@$1:`ssh $1 "ls -ltr /root/backup/mysql/*$3*.sql.gz | tail -n 1 | rev | cut -d' ' -f1 | rev"` ./${1}_`date +%y%m%d`.sql.gz ; zcat ${1}_`date +%y%m%d`.sql.gz | mysql -u root -p $2 }
 duser(){ zcat /var/www/html/User*.sql.gz | mysql -u root -p $1}
+cc(){ \rm -rf ./app/cache/; chown nginx:nginx -R .; chmod 777 -R . }
+pssl(){ chmod 777 -R /var/www/html/SSL; chown nginx:nginx -R /var/www/html/SSL }
 
 compdef dbdl=ssh
 compdef dsync_remote=ssh
@@ -210,3 +212,6 @@ bindkey "^T" new_terminal_working_directory
 # zsh-bd
 . ~/.zsh_repo/plugins/bd/bd.zsh
 
+
+# zsh-bd
+. ~/.zsh_repo/plugins/bd/bd.zsh

@@ -1,4 +1,6 @@
 ########################################
+source ~/.my_profile
+
 # env parameters
 export LANG=ja_JP.UTF-8
 
@@ -147,13 +149,52 @@ alias -g gf='git fetch'
 alias -g gb='git branch'
 alias -g lf='find ./ -type d -name "cache" -prune -o'
 
+
+## Gcloud
+dcp() {
+   case "$1" in
+       "dev" )
+           gcloud config set project dev-crm-project ;;
+       "stage" )
+           gcloud config set project dev-datacast-project
+           gcloud container clusters get-credentials staging3-api-cluster --zone asia-northeast1 ;;
+       "sandbox" )
+           gcloud config set project dev-datacast-project
+           gcloud container clusters get-credentials sandbox2-dev-datacast-api-cluster --zone asia-northeast1 ;;
+       "prod" )
+           gcloud config set project datacast-project
+           gcloud container clusters get-credentials production-datacast-api-cluster --zone asia-northeast1 ;;
+   esac
+}
+dclogin() {
+   case "$1" in
+       "stage" )
+           gcloud config set project dev-datacast-project
+           gcloud container clusters get-credentials staging3-api-cluster --zone asia-northeast1
+           kubectl exec -it `kubectl get pods --field-selector=status.phase=Running | head -n 2 | tail -n 1 | cut -d' ' -f1` -- bash ;;
+       "sandbox" )
+           gcloud config set project dev-datacast-project
+           gcloud container clusters get-credentials sandbox3-api-cluster --zone asia-northeast1
+           kubectl exec -it `kubectl get pods --field-selector=status.phase=Running | head -n 2 | tail -n 1 | cut -d' ' -f1` -- bash ;;
+       "sandbox2" )
+           gcloud config set project sandbox-datacast-project
+           gcloud container clusters get-credentials sandbox-api-cluster --zone asia-northeast1
+           kubectl exec -it `kubectl get pods --field-selector=status.phase=Running | head -n 2 | tail -n 1 | cut -d' ' -f1` -- bash ;;
+       "prod" )
+           gcloud config set project datacast-project
+           gcloud container clusters get-credentials production3-api-cluster --zone asia-northeast1
+           kubectl exec -it `kubectl get pods --field-selector=status.phase=Running | head -n 2 | tail -n 1 | cut -d' ' -f1` -- bash ;;
+   esac
+}
+
+gdmod() {
+  git status | grep modified | head -n${1} | rev | cut -d' ' -f1 | rev | xargs git diff -w
+}
+
+
+gcloud config set project dev-datacast-project
+
 myhosts() { _values `cat /etc/hosts` }
-dbdl(){ scp -rC root@$1:~/backup/mysql/`ssh $1 "ls -ltr /root/backup/mysql | tail -n 1 | rev | cut -d' ' -f1 | rev"` ./$1_`date +%y%m%d`.sql.gz }
-drestore(){ if [[ $1 =~ .sql.gz ]]; then zcat $1 | mysql -u root -p $2; else cat $1 | mysql -u root -p $2; fi }
-dsync_remote(){ scp root@$1:`ssh $1 "ls -ltr /root/backup/mysql/*$3*.sql.gz | tail -n 1 | rev | cut -d' ' -f1 | rev"` ./${1}_`date +%y%m%d`.sql.gz ; zcat ${1}_`date +%y%m%d`.sql.gz | mysql -u root -p $2 }
-duser(){ zcat /var/www/html/User*.sql.gz | mysql -u root -p $1}
-cc(){ \rm -rf ./app/cache/; chown nginx:nginx -R .; chmod 777 -R . }
-pssl(){ chmod 777 -R /var/www/html/SSL; chown nginx:nginx -R /var/www/html/SSL }
 
 compdef dbdl=ssh
 compdef dsync_remote=ssh
@@ -212,6 +253,15 @@ bindkey "^T" new_terminal_working_directory
 # zsh-bd
 . ~/.zsh_repo/plugins/bd/bd.zsh
 
+export NVM_DIR=~/.nvm
+source $(brew --prefix nvm)/nvm.sh
 
-# zsh-bd
-. ~/.zsh_repo/plugins/bd/bd.zsh
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
+# eval "$(pyenv virtualenv-init -)"
+
+export LDFLAGS="-L/usr/local/opt/zlib/lib -L/usr/local/opt/bzip2/lib"
+export CPPFLAGS="-I/usr/local/opt/zlib/include -I/usr/local/opt/bzip2/include"
+
+

@@ -150,6 +150,7 @@ alias -g gb='git branch'
 alias -g lf='find ./ -type d -name "cache" -prune -o'
 
 
+
 ## Gcloud
 dcp() {
    case "$1" in
@@ -171,24 +172,29 @@ dclogin() {
        "stage" )
            gcloud config set project dev-datacast-project
            gcloud container clusters get-credentials staging3-api-cluster --zone asia-northeast1
-           kubectl exec -it `kubectl get pods --field-selector=status.phase=Running | head -n 2 | tail -n 1 | cut -d' ' -f1` -- bash ;;
+           kubectl exec -it `kubectl get pods --field-selector=status.phase=Running | grep app | head -n 2 | tail -n 1 | cut -d' ' -f1` -- bash ;;
        "sandbox" )
            gcloud config set project dev-datacast-project
            gcloud container clusters get-credentials sandbox3-api-cluster --zone asia-northeast1
-           kubectl exec -it `kubectl get pods --field-selector=status.phase=Running | head -n 2 | tail -n 1 | cut -d' ' -f1` -- bash ;;
+           kubectl exec -it `kubectl get pods --field-selector=status.phase=Running | grep app | head -n 2 | tail -n 1 | cut -d' ' -f1` -- bash ;;
        "sandbox2" )
            gcloud config set project sandbox-datacast-project
            gcloud container clusters get-credentials sandbox-api-cluster --zone asia-northeast1
-           kubectl exec -it `kubectl get pods --field-selector=status.phase=Running | head -n 2 | tail -n 1 | cut -d' ' -f1` -- bash ;;
+           kubectl exec -it `kubectl get pods --field-selector=status.phase=Running | grep app | head -n 2 | tail -n 1 | cut -d' ' -f1` -- bash ;;
        "prod" )
            gcloud config set project datacast-project
            gcloud container clusters get-credentials production3-api-cluster --zone asia-northeast1
-           kubectl exec -it `kubectl get pods --field-selector=status.phase=Running | head -n 2 | tail -n 1 | cut -d' ' -f1` -- bash ;;
+           kubectl exec -it `kubectl get pods --field-selector=status.phase=Running | grep app | head -n 2 | tail -n 1 | cut -d' ' -f1` -- bash ;;
    esac
 }
 
 gdmod() {
   git status | grep modified | head -n${1} | rev | cut -d' ' -f1 | rev | xargs git diff -w
+}
+
+function uenc {
+    echo "$1" | nkf -WwMQ | sed 's/=$//g' | tr = % | tr -d '\n' | pbcopy
+    # echo ""
 }
 
 
@@ -253,15 +259,24 @@ bindkey "^T" new_terminal_working_directory
 # zsh-bd
 . ~/.zsh_repo/plugins/bd/bd.zsh
 
-export NVM_DIR=~/.nvm
-source $(brew --prefix nvm)/nvm.sh
+# export NVM_DIR=~/.nvm
+# source $(brew --prefix nvm)/nvm.sh
+
+export NVM_DIR="$HOME/.nvm"
+  [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
+  [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
+# source $(brew --prefix nvm)/nvm.sh
 
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
 # eval "$(pyenv virtualenv-init -)"
 
-export LDFLAGS="-L/usr/local/opt/zlib/lib -L/usr/local/opt/bzip2/lib"
-export CPPFLAGS="-I/usr/local/opt/zlib/include -I/usr/local/opt/bzip2/include"
+export LDFLAGS="-L/opt/homebrew/opt/zlib/lib -L/opt/homebrew/opt/bzip2/lib"
+export CPPFLAGS="-I/opt/homebrew/opt/zlib/include -I/opt/homebrew/opt/bzip2/include"
+
+###########
+alias ibrew='arch -x86_64 /usr/local/bin/brew'
 
 
+export PATH="/opt/homebrew/opt/mysql-client/bin:$PATH"
